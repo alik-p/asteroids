@@ -1,7 +1,17 @@
-export class AsteroidsGame {
+import { Drawing } from './drawing';
 
-    constructor(private canvas: HTMLCanvasElement) {
-        console.log('Game created on ', canvas);
+export class AsteroidsGame {
+    readonly #canvas: HTMLCanvasElement;
+    readonly #context: CanvasRenderingContext2D;
+
+    constructor(canvas: HTMLCanvasElement) {
+        this.#canvas = canvas;
+        this.#context = canvas.getContext('2d');
+        this.draw();
+    }
+
+    private draw(): void {
+        Drawing.drawGrid(this.#context);
     }
 
 }
