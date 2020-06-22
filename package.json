@@ -1,0 +1,11 @@
+{
+  "name": "asteroids",
+  "version": "1.0.0",
+  "description": "2D Game Asteroids",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "aliaksandr.papko@gmail.com",
+  "license": "MIT"
+}
