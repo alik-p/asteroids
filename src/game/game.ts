@@ -12,6 +12,7 @@ export class AsteroidsGame {
 
     private draw(): void {
         Drawing.drawGrid(this.#context);
+        Drawing.drawSpaceship(this.#context, 50);
     }
 
 }
