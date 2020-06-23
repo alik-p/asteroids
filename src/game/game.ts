@@ -21,6 +21,7 @@ export class AsteroidsGame {
         this.#asteroids = [
             new Asteroid(width * Math.random(), height * Math.random(), 50),
             new Asteroid(width * Math.random(), height * Math.random(), 40),
+            new Asteroid(width * Math.random(), height * Math.random(), 30),
         ];
         this.#fpsIndicator = new NumberIndicator(width - 10, height - 15, 'fps', {digits: 2});
         this.#spaceship = new Spaceship(width / 2, height / 2, 20);
@@ -44,7 +45,7 @@ export class AsteroidsGame {
         Drawing.drawGrid(this.#context);
         this.#fpsIndicator.draw(this.#context, this.#fps);
         this.#asteroids.forEach(asteroid => {
-           asteroid.draw(this.#context);
+            asteroid.draw(this.#context);
         });
         this.#spaceship.draw(this.#context);
 
@@ -52,6 +53,9 @@ export class AsteroidsGame {
 
 
     private update(timeElapsed: number): void {
+        this.#asteroids.forEach(asteroid => {
+            asteroid.update(this.#context, timeElapsed);
+        });
         this.#spaceship.update(this.#context, timeElapsed);
     }
 

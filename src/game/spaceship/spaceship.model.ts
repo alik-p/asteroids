@@ -28,8 +28,6 @@ export class Spaceship {
 
 
     update(context: CanvasRenderingContext2D, timeElapsed: number) {
-        const deltaX = this.#speed.x * timeElapsed;
-        const deltaY = this.#speed.y * timeElapsed;
         const {height, width} = context.canvas;
         // Position:
         this.#x += this.#speed.x * timeElapsed; // deltaX;
