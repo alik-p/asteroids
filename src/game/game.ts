@@ -1,22 +1,23 @@
 import { Drawing } from './drawing';
 import { Spaceship } from './spaceship/spaceship.model';
+import { NumberIndicator } from './shared/number-indicator/number-indicator.model';
 
 export class AsteroidsGame {
     readonly #canvas: HTMLCanvasElement;
     readonly #context: CanvasRenderingContext2D;
 
+    #fps: number;
+    #fpsIndicator: NumberIndicator;
     #spaceship: Spaceship;
     #timestamp: number;
 
 
     constructor(canvas: HTMLCanvasElement) {
+        const {height, width} = canvas;
         this.#canvas = canvas;
         this.#context = canvas.getContext('2d');
-        this.#spaceship = new Spaceship(
-            this.#canvas.width / 2,
-            this.#canvas.height / 2,
-            20
-        );
+        this.#fpsIndicator = new NumberIndicator(width - 10, height - 15, 'fps', {digits: 2});
+        this.#spaceship = new Spaceship(width / 2, height / 2, 20);
         requestAnimationFrame(this.frame.bind(this));
     }
 
@@ -24,6 +25,7 @@ export class AsteroidsGame {
     frame(timestamp: number): void {
         if (!this.#timestamp) this.#timestamp = timestamp;
         const elapsed = timestamp - this.#timestamp;
+        this.#fps = 1000 / elapsed;
         this.update(elapsed / 1000);
         this.draw();
         this.#timestamp = timestamp;
@@ -34,10 +36,8 @@ export class AsteroidsGame {
     private draw(): void {
         this.#context.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
         Drawing.drawGrid(this.#context);
+        this.#fpsIndicator.draw(this.#context, this.#fps);
         this.#spaceship.draw(this.#context);
-        // Temporary indication:
-        this.#context.fillStyle = 'white';
-        this.#context.fillText(`Timestamp: ${this.#timestamp}`, 20, 30);
     }
 
 
