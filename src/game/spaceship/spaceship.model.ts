@@ -4,8 +4,13 @@ import { Mass } from '../shared/mass/mass.model';
 
 export class Spaceship extends Mass {
 
-    constructor(x: number, y: number, radius: number) {
-        super(x, y, 1, radius, 1.5 * Math.PI, {x: 0, y: -50, rotation: 0});
+    readonly #steeringPower: number;
+    readonly #thruster: { power: number, on: boolean, right: boolean, left: boolean };
+
+    constructor(x: number, y: number, power: number) {
+        super(x, y, 10, 20, 1.5 * Math.PI);
+        this.#thruster = {power, on: false, right: false, left: false};
+        this.#steeringPower = power / 20;
     }
 
 
@@ -13,8 +18,31 @@ export class Spaceship extends Mass {
         context.save();
         context.translate(this.x, this.y);
         context.rotate(this.angle);
-        Drawing.drawSpaceship(context, this.radius);
+        Drawing.drawSpaceship(context, this.radius, this.#thruster.on);
         context.restore();
     }
+
+
+    thrusterLeft(on: boolean): void {
+        this.#thruster.left = on;
+    }
+
+
+    thrusterOn(on: boolean): void {
+        this.#thruster.on = on;
+    }
+
+
+    thrusterRight(on: boolean): void {
+        this.#thruster.right = on;
+    }
+
+
+    update(context: CanvasRenderingContext2D, timeElapsed: number): void {
+        this.push(this.angle, +this.#thruster.on * this.#thruster.power, timeElapsed);
+        this.twist((+this.#thruster.right - +this.#thruster.left) * this.#steeringPower, timeElapsed);
+        super.update(context, timeElapsed);
+    }
+
 
 }

@@ -19,7 +19,7 @@ export class Drawing {
             context.lineWidth = (x % major === 0) ? 0.5 : 0.25;
             context.stroke();
             if (x % major === 0) {
-                context.fillText(x + '', x, 10);
+                context.fillText(x + '', x + 2, 10);
             }
         }
         // y-axis:
@@ -30,7 +30,7 @@ export class Drawing {
             context.lineWidth = (y % major === 0) ? 0.5 : 0.25;
             context.stroke();
             if (y % major === 0) {
-                context.fillText(y + '', 0, y + 10);
+                context.fillText(y + '', 2, y + 10);
             }
 
         }

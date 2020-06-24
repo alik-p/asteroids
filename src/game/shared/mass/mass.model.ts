@@ -7,14 +7,17 @@ export interface MassSpeed {
 
 export class Mass {
 
+    angle: number;
+
     constructor(
         protected x: number,
         protected y: number,
         protected mass: number,     // TODO private?
         protected readonly radius: number,
-        protected angle: number = 0,
+        angle: number = 0,
         protected speed?: MassSpeed,
     ) {
+        this.angle = angle;
         const {x: speedX = 0, y: speedY = 0, rotation = 0} = this.speed || {};
         this.speed = {x: speedX, y: speedY, rotation};
     }

@@ -17,10 +17,12 @@ export class AsteroidsGame {
     constructor(canvas: HTMLCanvasElement) {
         const {height, width} = canvas;
         this.#canvas = canvas;
+        this.#canvas.focus();
         this.#context = canvas.getContext('2d');
         this.initAsteroids(3);
         this.#fpsIndicator = new NumberIndicator(width - 10, height - 15, 'fps', {digits: 2});
-        this.#spaceship = new Spaceship(width / 2, height / 2, 20);
+        this.#spaceship = new Spaceship(width / 2, height / 2, 300);
+        this.initControls();
         requestAnimationFrame(this.frame.bind(this));
     }
 
@@ -67,6 +69,49 @@ export class AsteroidsGame {
         for (let i = 0; i < count; i++) {
             this.#asteroids[i] = this.initAsteroid();
         }
+    }
+
+
+    private initControls(): void {
+        this.#canvas.addEventListener('keydown', this.keyDown.bind(this), true);
+        this.#canvas.addEventListener('keyup', this.keyUp.bind(this), true);
+    }
+
+
+    private keyDown(event: KeyboardEvent): void {
+        this.keyHandler(event, true);
+    }
+
+
+    private keyHandler(event: KeyboardEvent, pressed: boolean) {
+        let handled = true;
+        switch (event.key) {
+            case 'ArrowUp': {
+                this.#spaceship.thrusterOn(pressed);
+                break;
+            }
+            case 'ArrowLeft': {
+                this.#spaceship.thrusterLeft(pressed);
+                break;
+            }
+            case 'ArrowRight': {
+                this.#spaceship.thrusterRight(pressed);
+                break;
+            }
+            default: {
+                handled = false;
+                break;
+            }
+        }
+
+            if (handled) {
+            event.preventDefault();
+        }
+    }
+
+
+    private keyUp(event: KeyboardEvent): void {
+        this.keyHandler(event, false);
     }
 
 

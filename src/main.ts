@@ -5,6 +5,7 @@ function initCanvas(): HTMLCanvasElement {
     const canvas = document.createElement('canvas') as HTMLCanvasElement;
     canvas.height = 600;
     canvas.width = 600;
+    canvas.tabIndex = 1;
     return canvas;
 }
 
