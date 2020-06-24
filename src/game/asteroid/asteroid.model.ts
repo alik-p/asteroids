@@ -7,20 +7,16 @@ export class Asteroid extends Mass {
     readonly #noise: number;
     readonly #shape: number[] = [];
 
-    constructor(protected x: number, protected y: number, protected radius: number) {
+    constructor(protected x: number, protected y: number, protected mass: number) {
         super(
-            x, y, radius, 0,
-            {
-                x: Math.random() * 100,
-                y: Math.random() * 50,
-                rotation: 2 * Math.PI * (Math.random() - 0.5),
-            }
+            x,
+            y,
+            mass,
+            Math.sqrt((mass / 1) / Math.PI),  /* 1 - density, kg per square pixel*/
+            0
         );
         this.#noise = Math.random() - 0.4;
-        const segments = 5 + Math.random() * 30;
-        for (let i = 0; i < segments; i++) {
-            this.#shape.push(Math.random() - 0.5);
-        }
+        this.#shape = this.initShape(this.radius);
     }
 
 
@@ -30,6 +26,15 @@ export class Asteroid extends Mass {
         context.rotate(this.angle);
         Drawing.drawAsteroid(context, this.radius, this.#shape, this.#noise);
         context.restore();
+    }
+
+
+    private initShape(radius: number): number[] {
+        const circumference = 2 * Math.PI * radius;
+        let segments = Math.ceil(circumference / 15);
+        segments = Math.min(25, Math.max(5, segments));
+        return Array.from({length: segments}, () => Math.random() - 0.5);
+
     }
 
 
