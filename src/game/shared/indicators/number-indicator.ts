@@ -1,7 +1,8 @@
 export interface Options {
     align?: CanvasTextAlign;
+    color?: string;
     digits?: number;
-    pt?: number;
+    height?: number;
 }
 
 export class NumberIndicator {
@@ -12,8 +13,8 @@ export class NumberIndicator {
     readonly #options: Options;
 
     constructor(x: number, y: number, label: string, options?: Options) {
-        const {align = 'end', digits = 0, pt = 10} = options || {};
-        this.#options = {align, digits, pt};
+        const {align = 'end', color = 'white', digits = 0, height = 10} = options || {};
+        this.#options = {align, color, digits, height};
         this.#x = x;
         this.#y = y;
         this.#label = label ? `${label}: ` : '';
@@ -21,13 +22,13 @@ export class NumberIndicator {
 
     draw(context: CanvasRenderingContext2D, value: number): void {
         context.save();
-        context.fillStyle = 'white'; // TODO move value to 'options' param?
-        context.font = `${this.#options.pt}pt sans-serif`;
+        context.fillStyle = this.#options.color;
+        context.font = `${this.#options.height}pt sans-serif`;
         context.textAlign = this.#options.align;
         context.fillText(
             this.#label + value.toFixed(this.#options.digits),
             this.#x - 2,
-            this.#y + this.#options.pt - 1
+            this.#y + this.#options.height - 1
         );
         context.restore();
     }
