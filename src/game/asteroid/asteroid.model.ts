@@ -7,11 +7,9 @@ export class Asteroid extends Mass {
     readonly #noise: number;
     readonly #shape: number[] = [];
 
-    constructor(protected x: number, protected y: number, protected mass: number) {
+    constructor(x: number, y: number, protected mass: number) {
         super(
-            x,
-            y,
-            mass,
+            x, y, mass,
             Math.sqrt((mass / 1) / Math.PI),  /* 1 - density, kg per square pixel*/
             0
         );

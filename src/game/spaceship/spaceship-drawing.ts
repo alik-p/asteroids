@@ -4,6 +4,7 @@ export class SpaceshipDrawing {
         context: CanvasRenderingContext2D,
         radius: number,
         thruster: boolean,
+        compromised = false,
     ): void {
         const angle = (0.5 * Math.PI) / 2;
         const curve1 = 0.25;
@@ -16,7 +17,7 @@ export class SpaceshipDrawing {
         context.save();
         context.lineWidth = 2;          // TODO move value to 'options' param?
         context.strokeStyle = 'white';  // TODO move value to 'options' param?
-        context.fillStyle = 'black';    // TODO move value to 'options' param?
+        context.fillStyle = compromised ? 'red' : 'black';    // TODO move value to 'options' param?
         context.beginPath();
         context.moveTo(radius, 0);
         // Drawing spaceship using three curves

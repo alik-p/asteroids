@@ -3,6 +3,7 @@ import { Spaceship } from './spaceship/spaceship.model';
 import { NumberIndicator } from './shared/number-indicator/number-indicator.model';
 import { Asteroid } from './asteroid/asteroid.model';
 import { Projectile } from './spaceship/projectile.model';
+import { CollisionDetection } from './shared/collision-detection';
 
 export class AsteroidsGame {
     readonly #canvas: HTMLCanvasElement;
@@ -133,8 +134,12 @@ export class AsteroidsGame {
 
 
     private update(timeElapsed: number): void {
+        this.#spaceship.compromised = false;
         this.#asteroids.forEach(asteroid => {
             asteroid.update(this.#context, timeElapsed);
+            if (CollisionDetection.isCollision(asteroid, this.#spaceship)) {
+                this.#spaceship.compromised = true;
+            }
         });
         this.#spaceship.update(this.#context, timeElapsed);
         this.#projectiles.forEach((projectile, index, self) => {

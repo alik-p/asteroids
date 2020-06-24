@@ -10,16 +10,28 @@ export class Mass {
     angle: number;
 
     constructor(
-        protected x: number,
-        protected y: number,
+        protected _x: number,
+        protected _y: number,
         protected mass: number,     // TODO private?
-        protected readonly radius: number,
+        protected readonly _radius: number,
         angle: number = 0,
         protected speed?: MassSpeed,
     ) {
         this.angle = angle;
         const {x: speedX = 0, y: speedY = 0, rotation = 0} = this.speed || {};
         this.speed = {x: speedX, y: speedY, rotation};
+    }
+
+    get radius(): number {
+        return this._radius;
+    }
+
+    get x(): number {
+        return this._x;
+    }
+
+    get y(): number {
+        return this._y;
     }
 
 
@@ -62,25 +74,25 @@ export class Mass {
     update(context: CanvasRenderingContext2D, timeElapsed: number): void {
         const {height, width} = context.canvas;
         // Position:
-        this.x += this.speed.x * timeElapsed;
-        this.y += this.speed.y * timeElapsed;
+        this._x += this.speed.x * timeElapsed;
+        this._y += this.speed.y * timeElapsed;
         // Rotation:
         this.angle = (this.angle + this.speed.rotation * timeElapsed) % (2 * Math.PI);
         // Right border:
         if (this.x - this.radius > width) {
-            this.x = -this.radius;
+            this._x = -this.radius;
         }
         // Left border:
         if (this.x + this.radius < 0) {
-            this.x = width + this.radius;
+            this._x = width + this.radius;
         }
         // Top border:
         if (this.y + this.radius < 0) {
-            this.y = height + this.radius;
+            this._y = height + this.radius;
         }
         // Bottom border:
         if (this.y - this.radius > height) {
-            this.y = -this.radius;
+            this._y = -this.radius;
         }
     }
 

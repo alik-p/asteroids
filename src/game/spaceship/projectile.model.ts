@@ -6,8 +6,8 @@ export class Projectile extends Mass {
     #life: number;
 
     constructor(
-        protected x: number,
-        protected y: number,
+        x: number,
+        y: number,
         protected mass: number,
         private lifetime: number,
         protected speed: MassSpeed,
