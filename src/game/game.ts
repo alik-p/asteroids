@@ -1,9 +1,10 @@
 import { Drawing } from './drawing';
 import { Spaceship } from './spaceship/spaceship.model';
-import { NumberIndicator } from './shared/number-indicator/number-indicator.model';
+import { NumberIndicator } from './shared/indicators/number-indicator';
 import { Asteroid } from './asteroid/asteroid.model';
 import { Projectile } from './spaceship/projectile.model';
 import { CollisionDetection } from './shared/collision-detection';
+import { ProgressIndicator } from './shared/indicators/progress-indicator';
 
 export class AsteroidsGame {
     readonly #canvas: HTMLCanvasElement;
@@ -12,6 +13,7 @@ export class AsteroidsGame {
     #asteroids: Asteroid[];
     #fps: number;
     #fpsIndicator: NumberIndicator;
+    #healthIndicator: ProgressIndicator;
     #projectiles: Projectile[] = [];
     #spaceship: Spaceship;
     #timestamp: number;
@@ -24,6 +26,7 @@ export class AsteroidsGame {
         this.#context = canvas.getContext('2d');
         this.initAsteroids(3);
         this.#fpsIndicator = new NumberIndicator(width - 10, height - 15, 'fps', {digits: 2});
+        this.#healthIndicator = new ProgressIndicator(10, 15, 'health', 100, 10);
         this.#spaceship = new Spaceship(width / 2, height / 2, 100);
         this.initControls();
         requestAnimationFrame(this.frame.bind(this));
@@ -44,6 +47,7 @@ export class AsteroidsGame {
     private draw(): void {
         this.#context.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
         Drawing.drawGrid(this.#context);
+        this.#healthIndicator.draw(this.#context, this.#spaceship.health.max, this.#spaceship.health.left);
         this.#fpsIndicator.draw(this.#context, this.#fps);
         this.#asteroids.forEach(asteroid => {
             asteroid.draw(this.#context);

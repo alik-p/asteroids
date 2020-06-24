@@ -42,8 +42,8 @@ export class Spaceship extends Mass {
 
     compromised = false;
     weaponTrigger = false;
+    readonly health: { max: number, left: number };
 
-    readonly #health: { max: number, left: number };
     readonly #steeringPower: number;
     readonly #thruster: { power: number, on: boolean, right: boolean, left: boolean };
     readonly #weapon: Weapon;
@@ -51,7 +51,7 @@ export class Spaceship extends Mass {
     constructor(x: number, y: number, power: number) {
         super(x, y, 10, 20, 1.5 * Math.PI);
         const maxHealth = 2.0;
-        this.#health = {max: maxHealth, left: maxHealth};
+        this.health = {max: maxHealth, left: maxHealth};
         this.#steeringPower = power / 15;
         this.#thruster = {power, on: false, right: false, left: false};
         this.#weapon = new Weapon(power * 2, 0.25);
@@ -111,6 +111,7 @@ export class Spaceship extends Mass {
         this.push(this.angle, +this.#thruster.on * this.#thruster.power, timeElapsed);
         this.twist((+this.#thruster.right - +this.#thruster.left) * this.#steeringPower, timeElapsed);
         this.#weapon.update(timeElapsed);
+        this.health.left -= this.compromised ? Math.min(timeElapsed, this.health.left) : 0;
         super.update(context, timeElapsed);
     }
 
