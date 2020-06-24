@@ -1,16 +1,61 @@
 import { SpaceshipDrawing as Drawing } from './spaceship-drawing';
 import { Mass } from '../shared/mass/mass.model';
+import { Projectile } from './projectile.model';
+
+
+class Weapon {
+
+    #loaded = true;
+    #timeUntilReloaded: number;
+
+    constructor(
+        private _power: number,
+        private reloadTime: number,
+    ) {
+        this.#timeUntilReloaded = reloadTime;
+    }
+
+    get power(): number {
+        return this._power;
+    }
+
+    isLoaded(): boolean {
+        return this.#loaded;
+    }
+
+    reload(): void {
+        this.#timeUntilReloaded = this.reloadTime;
+    }
+
+    update(timeElapsed: number): void {
+        this.#loaded = this.#timeUntilReloaded === 0;
+        if (!this.isLoaded()) {
+            this.#timeUntilReloaded -= Math.min(timeElapsed, this.#timeUntilReloaded);
+        }
+    }
+
+
+}
 
 
 export class Spaceship extends Mass {
 
+    weaponTrigger: boolean;
+
     readonly #steeringPower: number;
     readonly #thruster: { power: number, on: boolean, right: boolean, left: boolean };
+    readonly #weapon: Weapon;
 
     constructor(x: number, y: number, power: number) {
         super(x, y, 10, 20, 1.5 * Math.PI);
         this.#thruster = {power, on: false, right: false, left: false};
-        this.#steeringPower = power / 20;
+        this.#steeringPower = power / 15;
+        this.#weapon = new Weapon(power * 2, 0.25);
+    }
+
+
+    get weaponLoaded(): boolean {
+        return this.#weapon.isLoaded();
     }
 
 
@@ -20,6 +65,21 @@ export class Spaceship extends Mass {
         context.rotate(this.angle);
         Drawing.drawSpaceship(context, this.radius, this.#thruster.on);
         context.restore();
+    }
+
+
+    shoot(timeElapsed: number): Projectile {
+        const projectile = new Projectile(
+            this.x + Math.cos(this.angle) * this.radius,
+            this.y + Math.sin(this.angle) * this.radius,
+            0.025,
+            1,
+            {...this.speed},
+        );
+        projectile.push(this.angle, this.#weapon.power, timeElapsed);
+        this.push(this.angle + Math.PI, this.#weapon.power, timeElapsed);
+        this.#weapon.reload();
+        return projectile;
     }
 
 
@@ -41,6 +101,7 @@ export class Spaceship extends Mass {
     update(context: CanvasRenderingContext2D, timeElapsed: number): void {
         this.push(this.angle, +this.#thruster.on * this.#thruster.power, timeElapsed);
         this.twist((+this.#thruster.right - +this.#thruster.left) * this.#steeringPower, timeElapsed);
+        this.#weapon.update(timeElapsed);
         super.update(context, timeElapsed);
     }
 

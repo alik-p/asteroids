@@ -2,6 +2,7 @@ import { Drawing } from './drawing';
 import { Spaceship } from './spaceship/spaceship.model';
 import { NumberIndicator } from './shared/number-indicator/number-indicator.model';
 import { Asteroid } from './asteroid/asteroid.model';
+import { Projectile } from './spaceship/projectile.model';
 
 export class AsteroidsGame {
     readonly #canvas: HTMLCanvasElement;
@@ -10,6 +11,7 @@ export class AsteroidsGame {
     #asteroids: Asteroid[];
     #fps: number;
     #fpsIndicator: NumberIndicator;
+    #projectiles: Projectile[] = [];
     #spaceship: Spaceship;
     #timestamp: number;
 
@@ -21,7 +23,7 @@ export class AsteroidsGame {
         this.#context = canvas.getContext('2d');
         this.initAsteroids(3);
         this.#fpsIndicator = new NumberIndicator(width - 10, height - 15, 'fps', {digits: 2});
-        this.#spaceship = new Spaceship(width / 2, height / 2, 300);
+        this.#spaceship = new Spaceship(width / 2, height / 2, 100);
         this.initControls();
         requestAnimationFrame(this.frame.bind(this));
     }
@@ -44,6 +46,9 @@ export class AsteroidsGame {
         this.#fpsIndicator.draw(this.#context, this.#fps);
         this.#asteroids.forEach(asteroid => {
             asteroid.draw(this.#context);
+        });
+        this.#projectiles.forEach(projectile => {
+            projectile.draw(this.#context);
         });
         this.#spaceship.draw(this.#context);
     }
@@ -98,13 +103,17 @@ export class AsteroidsGame {
                 this.#spaceship.thrusterRight(pressed);
                 break;
             }
+            case ' ': {     /* space */
+                this.#spaceship.weaponTrigger = pressed;
+                break;
+            }
             default: {
                 handled = false;
                 break;
             }
         }
 
-            if (handled) {
+        if (handled) {
             event.preventDefault();
         }
     }
@@ -120,6 +129,16 @@ export class AsteroidsGame {
             asteroid.update(this.#context, timeElapsed);
         });
         this.#spaceship.update(this.#context, timeElapsed);
+        this.#projectiles.forEach((projectile, index, self) => {
+            projectile.update(this.#context, timeElapsed);
+            if (projectile.life <= 0) {
+                self.splice(index, 1);
+            }
+        });
+        if (this.#spaceship.weaponTrigger && this.#spaceship.weaponLoaded) {
+            this.#projectiles.push(this.#spaceship.shoot(timeElapsed));
+        }
     }
+
 
 }
