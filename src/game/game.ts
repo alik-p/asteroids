@@ -18,11 +18,7 @@ export class AsteroidsGame {
         const {height, width} = canvas;
         this.#canvas = canvas;
         this.#context = canvas.getContext('2d');
-        this.#asteroids = [
-            new Asteroid(width * Math.random(), height * Math.random(), 50),
-            new Asteroid(width * Math.random(), height * Math.random(), 40),
-            new Asteroid(width * Math.random(), height * Math.random(), 30),
-        ];
+        this.initAsteroids(3);
         this.#fpsIndicator = new NumberIndicator(width - 10, height - 15, 'fps', {digits: 2});
         this.#spaceship = new Spaceship(width / 2, height / 2, 20);
         requestAnimationFrame(this.frame.bind(this));
@@ -48,7 +44,29 @@ export class AsteroidsGame {
             asteroid.draw(this.#context);
         });
         this.#spaceship.draw(this.#context);
+    }
 
+
+    private initAsteroid(): Asteroid {
+        const {height, width} = this.#canvas;
+        const asteroid = new Asteroid(
+            width * Math.random(),
+            height * Math.random(),
+            7000 + Math.random() * 5000
+        );
+        const elapsedTime = 0.015;
+        const force = 5000000;
+        asteroid.push(2 * Math.PI * Math.random(), force, elapsedTime);
+        asteroid.twist((Math.random() - 0.5) * Math.PI * force * 0.02, elapsedTime);
+        return asteroid;
+    }
+
+
+    private initAsteroids(count: number): void {
+        this.#asteroids = [];
+        for (let i = 0; i < count; i++) {
+            this.#asteroids[i] = this.initAsteroid();
+        }
     }
 
 
