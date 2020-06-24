@@ -55,16 +55,8 @@ export class AsteroidsGame {
 
 
     private initAsteroid(): Asteroid {
-        const {height, width} = this.#canvas;
-        const asteroid = new Asteroid(
-            width * Math.random(),
-            height * Math.random(),
-            7000 + Math.random() * 5000
-        );
-        const elapsedTime = 0.015;
-        const force = 5000000;
-        asteroid.push(2 * Math.PI * Math.random(), force, elapsedTime);
-        asteroid.twist((Math.random() - 0.5) * Math.PI * force * 0.02, elapsedTime);
+        const asteroid = this.newAsteroid();
+        this.pushAsteroid(asteroid);
         return asteroid;
     }
 
@@ -121,6 +113,22 @@ export class AsteroidsGame {
 
     private keyUp(event: KeyboardEvent): void {
         this.keyHandler(event, false);
+    }
+
+
+    private newAsteroid(): Asteroid {
+        return new Asteroid(
+            this.#canvas.width * Math.random(),
+            this.#canvas.height * Math.random(),
+            7000 + Math.random() * 5000,
+        );
+    }
+
+
+    private pushAsteroid(asteroid: Asteroid, elapsedTime = 0.015): void {
+        const force = 5000000;   // max force to apply in one frame // TODO random?
+        asteroid.push(2 * Math.PI * Math.random(), force, elapsedTime);
+        asteroid.twist((Math.random() - 0.5) * Math.PI * force * 0.02, elapsedTime);
     }
 
 
