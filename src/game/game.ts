@@ -17,6 +17,8 @@ export class AsteroidsGame {
     #fpsIndicator: NumberIndicator;
     #gameOver: boolean;
     #healthIndicator: ProgressIndicator;
+    #level: number;
+    #levelIndicator: NumberIndicator;
     #messageBox: MessageBox;
     #projectiles: Projectile[];
     #score: number;
@@ -31,6 +33,7 @@ export class AsteroidsGame {
         this.#canvas.focus();
         this.#context = canvas.getContext('2d');
         this.#messageBox = new MessageBox(width / 2, height * 0.4);
+        this.#levelIndicator = new NumberIndicator(width / 2, 5, 'level', {align: 'center'});
         this.#fpsIndicator = new NumberIndicator(width - 10, height - 15, 'fps', {digits: 2});
         this.#healthIndicator = new ProgressIndicator(10, 15, 'health', 100, 10);
         this.#scoreIndicator = new NumberIndicator(width - 10, 15, 'score');
@@ -65,6 +68,7 @@ export class AsteroidsGame {
             projectile.draw(this.#context);
         });
         this.#spaceship.draw(this.#context);
+        this.#levelIndicator.draw(this.#context, this.#level);
         this.#fpsIndicator.draw(this.#context, this.#fps);
         this.#healthIndicator.draw(this.#context, this.#spaceship.health.max, this.#spaceship.health.left);
         this.#scoreIndicator.draw(this.#context, this.#score);
@@ -123,7 +127,6 @@ export class AsteroidsGame {
                 break;
             }
         }
-
         if (handled) {
             event.preventDefault();
         }
@@ -132,6 +135,12 @@ export class AsteroidsGame {
 
     private keyUp(event: KeyboardEvent): void {
         this.keyHandler(event, false);
+    }
+
+
+    private levelUp(): void {
+        this.#level += 1;
+        this.initAsteroids(this.#level);
     }
 
 
@@ -151,8 +160,9 @@ export class AsteroidsGame {
     }
 
 
-    restart(): void {
+    private restart(): void {
         this.#gameOver = false;
+        this.#level = 0;
         this.#score = 0;
         this.#spaceship = new Spaceship(
             this.#canvas.width / 2,
@@ -160,7 +170,7 @@ export class AsteroidsGame {
             100
         );
         this.#projectiles = [];
-        this.initAsteroids(1);
+        this.levelUp();
     }
 
 
@@ -182,6 +192,9 @@ export class AsteroidsGame {
 
 
     private update(timeElapsed: number): void {
+        if (this.#asteroids.length === 0) {
+            this.levelUp();
+        }
         this.#spaceship.compromised = false;
         this.#asteroids.forEach(asteroid => {
             asteroid.update(this.#context, timeElapsed);
@@ -212,6 +225,5 @@ export class AsteroidsGame {
             this.#projectiles.push(this.#spaceship.shoot(timeElapsed));
         }
     }
-
 
 }
