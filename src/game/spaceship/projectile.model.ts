@@ -8,7 +8,7 @@ export class Projectile extends Mass {
     constructor(
         x: number,
         y: number,
-        protected mass: number,
+        mass: number,
         private lifetime: number,
         protected speed: MassSpeed,
     ) {

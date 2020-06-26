@@ -7,7 +7,7 @@ export class Asteroid extends Mass {
     readonly #noise: number;
     readonly #shape: number[] = [];
 
-    constructor(x: number, y: number, protected mass: number) {
+    constructor(x: number, y: number, mass: number) {
         super(
             x, y, mass,
             Math.sqrt((mass / 1) / Math.PI),  /* 1 - density, kg per square pixel*/
@@ -15,6 +15,13 @@ export class Asteroid extends Mass {
         );
         this.#noise = Math.random() - 0.4;
         this.#shape = this.initShape(this.radius);
+    }
+
+
+    child(mass: number): Asteroid {
+        const child = new Asteroid(this.x, this.y, mass);
+        child.speed = {...this.speed};
+        return child;
     }
 
 

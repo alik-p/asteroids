@@ -9,6 +9,7 @@ import { ProgressIndicator } from './shared/indicators/progress-indicator';
 export class AsteroidsGame {
     readonly #canvas: HTMLCanvasElement;
     readonly #context: CanvasRenderingContext2D;
+    readonly #massDestroyed = 500;  // mass destroyed on each hit
 
     #asteroids: Asteroid[];
     #fps: number;
@@ -24,7 +25,7 @@ export class AsteroidsGame {
         this.#canvas = canvas;
         this.#canvas.focus();
         this.#context = canvas.getContext('2d');
-        this.initAsteroids(3);
+        this.initAsteroids(1);
         this.#fpsIndicator = new NumberIndicator(width - 10, height - 15, 'fps', {digits: 2});
         this.#healthIndicator = new ProgressIndicator(10, 15, 'health', 100, 10);
         this.#spaceship = new Spaceship(width / 2, height / 2, 100);
@@ -137,6 +138,21 @@ export class AsteroidsGame {
     }
 
 
+    private splitAsteroid(asteroid: Asteroid, elapsedTime: number): void {
+        asteroid.mass -= this.#massDestroyed;
+        const split = 0.25 + 0.5 * Math.random();
+        const child1 = asteroid.child(asteroid.mass * split);
+        const child2 = asteroid.child(asteroid.mass * (1 - split));
+        [child1, child2].forEach(child => {
+            if (child.mass >= this.#massDestroyed) {
+                this.pushAsteroid(child, elapsedTime);
+                this.#asteroids.push(child);
+            }
+        });
+
+    }
+
+
     private update(timeElapsed: number): void {
         this.#spaceship.compromised = false;
         this.#asteroids.forEach(asteroid => {
@@ -146,10 +162,18 @@ export class AsteroidsGame {
             }
         });
         this.#spaceship.update(this.#context, timeElapsed);
-        this.#projectiles.forEach((projectile, index, self) => {
+        this.#projectiles.forEach((projectile, indexP, projectiles) => {
             projectile.update(this.#context, timeElapsed);
             if (projectile.life <= 0) {
-                self.splice(index, 1);
+                projectiles.splice(indexP, 1);
+            } else {
+                this.#asteroids.forEach((asteroid, indexA, asteroids) => {
+                    if (CollisionDetection.isCollision(asteroid, projectile)) {
+                        projectiles.splice(indexP, 1);
+                        asteroids.splice(indexA, 1);
+                        this.splitAsteroid(asteroid, timeElapsed);
+                    }
+                });
             }
         });
         if (this.#spaceship.weaponTrigger && this.#spaceship.weaponLoaded) {
