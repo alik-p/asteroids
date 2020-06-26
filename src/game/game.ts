@@ -1,11 +1,12 @@
-import { Drawing } from './drawing';
-import { Spaceship } from './spaceship/spaceship.model';
-import { NumberIndicator } from './shared/indicators/number-indicator';
-import { Asteroid } from './asteroid/asteroid.model';
-import { Projectile } from './spaceship/projectile.model';
-import { CollisionDetection } from './shared/collision-detection';
-import { ProgressIndicator } from './shared/indicators/progress-indicator';
-import { MessageBox } from './shared/message-box';
+import { Spaceship } from './spaceship/spaceship';
+import { NumberIndicator } from './game-area/number-indicator';
+import { Asteroid } from './asteroid/asteroid';
+import { Projectile } from './spaceship/projectile';
+import { CollisionDetection } from './collision-detection';
+import { ProgressIndicator } from './game-area/progress-indicator';
+import { MessageBox } from './game-area/message-box';
+import { Grid } from './game-area/grid';
+
 
 export class AsteroidsGame {
     readonly #canvas: HTMLCanvasElement;
@@ -33,10 +34,10 @@ export class AsteroidsGame {
         this.#canvas.focus();
         this.#context = canvas.getContext('2d');
         this.#messageBox = new MessageBox(width / 2, height * 0.4);
-        this.#levelIndicator = new NumberIndicator(width / 2, 5, 'level', {align: 'center'});
+        this.#levelIndicator = new NumberIndicator(width / 2, 15, 'Level', {align: 'center'});
         this.#fpsIndicator = new NumberIndicator(width - 10, height - 15, 'fps', {digits: 2});
-        this.#healthIndicator = new ProgressIndicator(10, 15, 'health', 100, 10);
-        this.#scoreIndicator = new NumberIndicator(width - 10, 15, 'score');
+        this.#healthIndicator = new ProgressIndicator(10, 15, 'Health', 100, 10);
+        this.#scoreIndicator = new NumberIndicator(width - 10, 15, 'Score');
         this.initControls();
         requestAnimationFrame(this.frame.bind(this));
         this.restart();
@@ -56,7 +57,7 @@ export class AsteroidsGame {
 
     private draw(): void {
         this.#context.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
-        Drawing.drawGrid(this.#context);
+        Grid.draw(this.#context);
         this.#asteroids.forEach(asteroid => {
             asteroid.draw(this.#context);
         });

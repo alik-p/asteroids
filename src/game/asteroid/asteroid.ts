@@ -1,5 +1,5 @@
 import { AsteroidDrawing as Drawing } from './asteroid-drawing';
-import { Mass } from '../shared/mass/mass.model';
+import { Mass } from '../mass/mass';
 
 
 export class Asteroid extends Mass {

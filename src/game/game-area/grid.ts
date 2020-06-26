@@ -1,6 +1,6 @@
-export class Drawing {
+export class Grid {
 
-    static drawGrid(context: CanvasRenderingContext2D): void {
+    static draw(context: CanvasRenderingContext2D): void {
         // Configs:
         const minor = 10;
         const major = minor * 5;

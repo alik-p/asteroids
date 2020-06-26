@@ -1,5 +1,5 @@
 import { ProjectileDrawing as Drawing } from './projectile-drawing';
-import { Mass, MassSpeed } from '../shared/mass/mass.model';
+import { Mass, MassSpeed } from '../mass/mass';
 
 export class Projectile extends Mass {
 
