@@ -41,6 +41,7 @@ class Weapon {
 export class Spaceship extends Mass {
 
     compromised = false;
+    reverse = false;
     weaponTrigger = false;
     readonly health: { max: number, left: number };
 
@@ -108,7 +109,8 @@ export class Spaceship extends Mass {
 
 
     update(context: CanvasRenderingContext2D, timeElapsed: number): void {
-        this.push(this.angle, +this.#thruster.on * this.#thruster.power, timeElapsed);
+        const direction = +this.#thruster.on- +this.reverse;
+        this.push(this.angle, direction * this.#thruster.power, timeElapsed);
         this.twist((+this.#thruster.right - +this.#thruster.left) * this.#steeringPower, timeElapsed);
         this.#weapon.update(timeElapsed);
         this.health.left -= this.compromised ? Math.min(timeElapsed, this.health.left) : 0;

@@ -116,6 +116,10 @@ export class AsteroidsGame {
                 this.#spaceship.thrusterRight(pressed);
                 break;
             }
+            case 'ArrowDown': {
+                this.#spaceship.reverse = pressed;
+                break;
+            }
             case ' ': {     /* space */
                 this.#gameOver
                     ? this.restart()
