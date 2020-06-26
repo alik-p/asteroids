@@ -5,6 +5,7 @@ import { Asteroid } from './asteroid/asteroid.model';
 import { Projectile } from './spaceship/projectile.model';
 import { CollisionDetection } from './shared/collision-detection';
 import { ProgressIndicator } from './shared/indicators/progress-indicator';
+import { MessageBox } from './shared/message-box';
 
 export class AsteroidsGame {
     readonly #canvas: HTMLCanvasElement;
@@ -14,7 +15,9 @@ export class AsteroidsGame {
     #asteroids: Asteroid[];
     #fps: number;
     #fpsIndicator: NumberIndicator;
+    #gameOver: boolean;
     #healthIndicator: ProgressIndicator;
+    #messageBox: MessageBox;
     #projectiles: Projectile[] = [];
     #score: number;
     #scoreIndicator: NumberIndicator;
@@ -28,7 +31,9 @@ export class AsteroidsGame {
         this.#canvas.focus();
         this.#context = canvas.getContext('2d');
         this.#score = 0;
+        this.#gameOver = false;
         this.initAsteroids(1);
+        this.#messageBox = new MessageBox(width / 2, height * 0.4);
         this.#fpsIndicator = new NumberIndicator(width - 10, height - 15, 'fps', {digits: 2});
         this.#healthIndicator = new ProgressIndicator(10, 15, 'health', 100, 10);
         this.#scoreIndicator = new NumberIndicator(width - 10, 15, 'score');
@@ -55,6 +60,10 @@ export class AsteroidsGame {
         this.#asteroids.forEach(asteroid => {
             asteroid.draw(this.#context);
         });
+        if (this.#gameOver) {
+            this.#messageBox.draw(this.#context, 'GAME OVER', 'Press Space to play again');
+            return;
+        }
         this.#projectiles.forEach(projectile => {
             projectile.draw(this.#context);
         });
@@ -62,7 +71,6 @@ export class AsteroidsGame {
         this.#fpsIndicator.draw(this.#context, this.#fps);
         this.#healthIndicator.draw(this.#context, this.#spaceship.health.max, this.#spaceship.health.left);
         this.#scoreIndicator.draw(this.#context, this.#score);
-
     }
 
 
@@ -169,6 +177,10 @@ export class AsteroidsGame {
                 this.#spaceship.compromised = true;
             }
         });
+        if (this.#spaceship.health.left <= 0) {
+            this.#gameOver = true;
+            return;
+        }
         this.#spaceship.update(this.#context, timeElapsed);
         this.#projectiles.forEach((projectile, indexP, projectiles) => {
             projectile.update(this.#context, timeElapsed);
