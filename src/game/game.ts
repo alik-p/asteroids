@@ -27,17 +27,11 @@ export class AsteroidsGame {
     #spaceship: Spaceship;
     #timestamp: number;
 
-
     constructor(canvas: HTMLCanvasElement) {
-        const {height, width} = canvas;
         this.#canvas = canvas;
         this.#canvas.focus();
         this.#context = canvas.getContext('2d');
-        this.#messageBox = new MessageBox(width / 2, height * 0.4);
-        this.#levelIndicator = new NumberIndicator(width / 2, 15, 'Level', {align: 'center'});
-        this.#fpsIndicator = new NumberIndicator(width - 10, height - 15, 'fps', {digits: 2});
-        this.#healthIndicator = new ProgressIndicator(10, 15, 'Health', 100, 10);
-        this.#scoreIndicator = new NumberIndicator(width - 10, 15, 'Score');
+        this.initIndicators();
         this.initControls();
         requestAnimationFrame(this.frame.bind(this));
         this.restart();
@@ -94,6 +88,16 @@ export class AsteroidsGame {
     private initControls(): void {
         this.#canvas.addEventListener('keydown', this.keyDown.bind(this), true);
         this.#canvas.addEventListener('keyup', this.keyUp.bind(this), true);
+    }
+
+
+    private initIndicators(): void {
+        const {height, width} = this.#canvas;
+        this.#messageBox = new MessageBox(width / 2, height * 0.4);
+        this.#levelIndicator = new NumberIndicator(width / 2, 15, 'Level', {align: 'center'});
+        this.#fpsIndicator = new NumberIndicator(width - 10, height - 15, 'fps', {digits: 2, color: '#009900'});
+        this.#healthIndicator = new ProgressIndicator(10, 15, 'Health', 100, 10);
+        this.#scoreIndicator = new NumberIndicator(width - 10, 15, 'Score');
     }
 
 
