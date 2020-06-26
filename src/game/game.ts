@@ -16,6 +16,8 @@ export class AsteroidsGame {
     #fpsIndicator: NumberIndicator;
     #healthIndicator: ProgressIndicator;
     #projectiles: Projectile[] = [];
+    #score: number;
+    #scoreIndicator: NumberIndicator;
     #spaceship: Spaceship;
     #timestamp: number;
 
@@ -25,9 +27,11 @@ export class AsteroidsGame {
         this.#canvas = canvas;
         this.#canvas.focus();
         this.#context = canvas.getContext('2d');
+        this.#score = 0;
         this.initAsteroids(1);
         this.#fpsIndicator = new NumberIndicator(width - 10, height - 15, 'fps', {digits: 2});
         this.#healthIndicator = new ProgressIndicator(10, 15, 'health', 100, 10);
+        this.#scoreIndicator = new NumberIndicator(width - 10, 15, 'score');
         this.#spaceship = new Spaceship(width / 2, height / 2, 100);
         this.initControls();
         requestAnimationFrame(this.frame.bind(this));
@@ -48,8 +52,6 @@ export class AsteroidsGame {
     private draw(): void {
         this.#context.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
         Drawing.drawGrid(this.#context);
-        this.#healthIndicator.draw(this.#context, this.#spaceship.health.max, this.#spaceship.health.left);
-        this.#fpsIndicator.draw(this.#context, this.#fps);
         this.#asteroids.forEach(asteroid => {
             asteroid.draw(this.#context);
         });
@@ -57,6 +59,10 @@ export class AsteroidsGame {
             projectile.draw(this.#context);
         });
         this.#spaceship.draw(this.#context);
+        this.#fpsIndicator.draw(this.#context, this.#fps);
+        this.#healthIndicator.draw(this.#context, this.#spaceship.health.max, this.#spaceship.health.left);
+        this.#scoreIndicator.draw(this.#context, this.#score);
+
     }
 
 
@@ -140,16 +146,18 @@ export class AsteroidsGame {
 
     private splitAsteroid(asteroid: Asteroid, elapsedTime: number): void {
         asteroid.mass -= this.#massDestroyed;
+        this.#score += this.#massDestroyed;
         const split = 0.25 + 0.5 * Math.random();
         const child1 = asteroid.child(asteroid.mass * split);
         const child2 = asteroid.child(asteroid.mass * (1 - split));
         [child1, child2].forEach(child => {
-            if (child.mass >= this.#massDestroyed) {
+            if (child.mass < this.#massDestroyed) {
+                this.#score += child.mass;
+            } else {
                 this.pushAsteroid(child, elapsedTime);
                 this.#asteroids.push(child);
             }
         });
-
     }
 
 
