@@ -18,7 +18,7 @@ export class AsteroidsGame {
     #gameOver: boolean;
     #healthIndicator: ProgressIndicator;
     #messageBox: MessageBox;
-    #projectiles: Projectile[] = [];
+    #projectiles: Projectile[];
     #score: number;
     #scoreIndicator: NumberIndicator;
     #spaceship: Spaceship;
@@ -30,16 +30,13 @@ export class AsteroidsGame {
         this.#canvas = canvas;
         this.#canvas.focus();
         this.#context = canvas.getContext('2d');
-        this.#score = 0;
-        this.#gameOver = false;
-        this.initAsteroids(1);
         this.#messageBox = new MessageBox(width / 2, height * 0.4);
         this.#fpsIndicator = new NumberIndicator(width - 10, height - 15, 'fps', {digits: 2});
         this.#healthIndicator = new ProgressIndicator(10, 15, 'health', 100, 10);
         this.#scoreIndicator = new NumberIndicator(width - 10, 15, 'score');
-        this.#spaceship = new Spaceship(width / 2, height / 2, 100);
         this.initControls();
         requestAnimationFrame(this.frame.bind(this));
+        this.restart();
     }
 
 
@@ -116,7 +113,9 @@ export class AsteroidsGame {
                 break;
             }
             case ' ': {     /* space */
-                this.#spaceship.weaponTrigger = pressed;
+                this.#gameOver
+                    ? this.restart()
+                    : this.#spaceship.weaponTrigger = pressed;
                 break;
             }
             default: {
@@ -149,6 +148,19 @@ export class AsteroidsGame {
         const force = 5000000;   // max force to apply in one frame // TODO random?
         asteroid.push(2 * Math.PI * Math.random(), force, elapsedTime);
         asteroid.twist((Math.random() - 0.5) * Math.PI * force * 0.02, elapsedTime);
+    }
+
+
+    restart(): void {
+        this.#gameOver = false;
+        this.#score = 0;
+        this.#spaceship = new Spaceship(
+            this.#canvas.width / 2,
+            this.#canvas.height / 2,
+            100
+        );
+        this.#projectiles = [];
+        this.initAsteroids(1);
     }
 
 
